@@ -1,0 +1,30 @@
+#!/bin/bash
+# delete users using udel <uid>
+
+#define backup folder
+backup=$HOME/studium/HS_ES/WS15/rb/scripts/backup
+
+#define file for user-info-storage
+passwd=$HOME/studium/HS_ES/WS15/rb/scripts/passwd
+
+# test for LINE_BEGIN+USERNAME+COLON
+if grep "^$1:" $passwd > /dev/null; then
+	# save homedir into home
+	home=$(awk -F: -v target=$1 '{if ( $1 == target ) {print $6}}' $passwd)
+	if [ -d "$backup" ]; then
+		mv "$home" "$backup"
+	else
+		mkdir "$backup"
+		mv "$home" "$backup"
+	fi
+	# look for LINE_BEGIN+USERNAME+COLON, delete whole line
+	sed -i '/^'"$1"':/d' $passwd
+
+	# exit successfully
+	exit 0
+else
+	echo "User $1 not found"
+	
+	# exit unsuccessfully
+	exit 1
+fi
