@@ -3,9 +3,9 @@
 
 # declare local variables to ensure we don't accidentally use the system files
 # dirs
-root=$HOME/studium/HS_ES/WS15/rb/scripts/
-home=$HOME/studium/HS_ES/WS15/rb/scripts/home/
-skel=$HOME/studium/HS_ES/WS15/rb/scripts/etc/skel/
+root=$HOME/studium/HS_ES/WS15/rb/scripts
+home=$HOME/studium/HS_ES/WS15/rb/scripts/home
+skel=$HOME/studium/HS_ES/WS15/rb/scripts/etc/skel
 # files
 passwd=$HOME/studium/HS_ES/WS15/rb/scripts/etc/passwd
 group=$HOME/studium/HS_ES/WS15/rb/scripts/etc/group
@@ -42,11 +42,11 @@ fi
 
 # insert user into passwd
 passphrase=$(openssl passwd -1 -salt xyz start123)
-echo "$1:x:$2:$3::${home}$1:$shell" >> $passwd
-echo "$1:$passphrase:0::::::" >> $shadow
+echo "$1:x:$2:$3::${home}/$1:$shell" >> $passwd
+echo "$1:${passphrase}:0::::::" >> $shadow
 
 # insert group into group
-echo "$1:$passphrase:$3:" >> $group
+echo "$1::$3:" >> $group
 
 if [ -d "$home/$1" ]; then
 	echo "Homedir already exists"
@@ -54,4 +54,4 @@ if [ -d "$home/$1" ]; then
 fi
 
 mkdir "$home/$1"
-cp ${skel}/.* $home/$1 2>/dev/null
+cp "${skel}/.*" "$home/$1" 2>/dev/null
