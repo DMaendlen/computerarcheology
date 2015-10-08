@@ -1,0 +1,10 @@
+#!/bin/bash
+# look recursively into directories: search <dir> <name>
+
+for i in $(ls $1); do
+	if [[ -d "$i" ]]; then
+		search $i $2
+	elif [[ "$i" == "$2" ]]; then
+		readlink -f $i
+	fi
+done
