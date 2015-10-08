@@ -54,4 +54,4 @@ if [ -d "$home/$1" ]; then
 fi
 
 mkdir "$home/$1"
-cp ${skel}/.* $home/$1 >/dev/null
+cp ${skel}/.* $home/$1 2>/dev/null
