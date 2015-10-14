@@ -1,0 +1,8 @@
+#!/bin/bash
+# usage: colfind <dir>
+
+files="0;32m"		#green
+directories="0;34"	#blue
+execs="0;31"		#red
+hlink="1;35"		#purple
+slink="0;36"		#cyan
