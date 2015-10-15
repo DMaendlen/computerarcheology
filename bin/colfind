@@ -1,8 +1,45 @@
 #!/bin/bash
 # usage: colfind <dir>
 
-files="0;32m"		#green
-directories="0;34"	#blue
-execs="0;31"		#red
-hlink="1;35"		#purple
-slink="0;36"		#cyan
+if [ -z $1 ]; then
+	echo "Usage: colfind <dir>"
+	exit 1
+fi
+
+execs="[0;31m"		#red
+files="[0;32m"		#green
+directories="[0;34m"		#blue
+hlink="[1;35m"		#purple
+slink="[0;36m"		#cyan
+
+hlfind()
+{
+	ls -l $1 | awk '{if($2 > 1){print "1"}}'
+}
+colfind()
+{
+	cd $1
+	if [ -z "$(ls)" ]; then
+		cd -
+	fi
+	for i in $(ls -a);do
+		if [[ "$i" != "." && "$i" != ".." ]];then
+			if [ -d $i ];then
+				echo "${directories}${PWD}/$i"
+				cd $i
+				colfind $PWD
+				cd ..
+			elif [ -n "$(hlfind $i)" ];then
+				echo "${hlink}${PWD}/$i"
+			elif [ -L $i ];then
+				echo "${slink}${PWD}/$i"
+			elif [ -x $i ];then
+				echo "${execs}${PWD}/$i"
+			elif [ -f $i ];then
+				echo "${files}${PWD}/$i"
+			fi
+		fi
+	done
+}
+
+colfind $1
