@@ -6,7 +6,6 @@ if [ -z $1 ]; then
 	exit 1
 fi
 
-bw="[0;0m"			#black/white
 execs="[0;31m"		#red
 files="[0;32m"		#green
 directories="[0;34m"		#blue
@@ -27,13 +26,13 @@ colfind()
 				colfind $PWD
 				cd ..
 			elif [ -n "$(hlfind $i)" ];then
-				echo "${hlink}${PWD}/$i${bw}"
+				echo "${hlink}${PWD}/$i"
 			elif [ -L $i ];then
-				echo "${slink}${PWD}/$i${bw}"
+				echo "${slink}${PWD}/$i"
 			elif [ -x $i ];then
-				echo "${execs}${PWD}/$i${bw}"
+				echo "${execs}${PWD}/$i"
 			elif [ -f $i ];then
-				echo "${files}${PWD}/$i${bw}"
+				echo "${files}${PWD}/$i"
 			fi
 		fi
 	done
