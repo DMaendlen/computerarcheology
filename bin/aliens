@@ -16,7 +16,7 @@ not_owned_by_user()
 }
 foreign()
 {
-	for i in $(ls -A1 | tr ' ' '\ ');do
+	for i in $(ls -A1);do
 		if [[ "$i" != "." && "$i" != ".." ]]; then
 			if [ -d $i ];then
 				cd $i
