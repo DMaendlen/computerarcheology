@@ -1,0 +1,34 @@
+#!/bin/bash
+# usage: aliens <user>
+
+if [ -z $1 ]; then
+	echo "Usage: aliens <user>"
+	exit 1
+fi
+
+user=$1
+not_owned_by_user()
+{
+	fileowner=$(ls -l "$1" 2>/dev/null | awk '{print $3}')
+	if [[ "$fileowner" != "$2" ]];then
+		echo true
+	fi
+}
+foreign()
+{
+	for i in $(ls -A1 | tr ' ' '\ ');do
+		if [[ "$i" != "." && "$i" != ".." ]]; then
+			if [ -d $i ];then
+				cd $i
+				foreign
+				cd ..
+			elif [[ $(not_owned_by_user "$i" "$user") ]];then
+				echo "$PWD/$i"
+			fi
+		fi
+	done
+}
+
+eval cd ~"$user" 2>/dev/null ||\
+	{ echo "No such directory or no rights for: $1"; exit 1; }
+foreign
