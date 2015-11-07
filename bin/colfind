@@ -6,6 +6,9 @@ if [ -z $1 ]; then
 	exit 1
 fi
 
+saveifs=$IFS
+IFS=$(echo -ne "\n\b")
+
 execs="[0;31m"		#red
 files="[0;32m"		#green
 directories="[0;34m"		#blue
@@ -18,22 +21,20 @@ hlfind()
 }
 colfind()
 {
-	for i in $(ls -a);do
-		if [[ "$i" != "." && "$i" != ".." ]];then
-			if [ -d $i ];then
-				echo "${directories}${PWD}/$i"
-				cd $i
-				colfind $PWD
-				cd ..
-			elif [ -n "$(hlfind $i)" ];then
-				echo "${hlink}${PWD}/$i"
-			elif [ -L $i ];then
-				echo "${slink}${PWD}/$i"
-			elif [ -x $i ];then
-				echo "${execs}${PWD}/$i"
-			elif [ -f $i ];then
-				echo "${files}${PWD}/$i"
-			fi
+	for i in $(ls -A);do
+		if [ -d $i ];then
+			echo "${directories}${PWD}/$i"
+			cd $i
+			colfind $PWD
+			cd ..
+		elif [ -n "$(hlfind $i)" ];then
+			echo "${hlink}${PWD}/$i"
+		elif [ -L $i ];then
+			echo "${slink}${PWD}/$i"
+		elif [ -x $i ];then
+			echo "${execs}${PWD}/$i"
+		elif [ -f $i ];then
+			echo "${files}${PWD}/$i"
 		fi
 	done
 }
@@ -41,3 +42,4 @@ colfind()
 cd $1 2>/dev/null || { echo "No such directory or no rights for: $1"; exit 1; }
 
 colfind $1
+IFS=$saveifs

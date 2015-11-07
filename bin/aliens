@@ -6,23 +6,28 @@ if [ -z $1 ]; then
 	exit 1
 fi
 
+saveifs=$IFS
+IFS=$(echo -en "\n\b")
+
 user=$1
 not_owned_by_user()
 {
 	fileowner=$(ls -l "$1" 2>/dev/null | awk '{print $3}')
 	if [[ "$fileowner" != "$2" ]];then
-		echo true
+		return 0
+	else
+		return 1
 	fi
 }
 foreign()
 {
 	for i in $(ls -A1);do
 		if [[ "$i" != "." && "$i" != ".." ]]; then
-			if [ -d $i ];then
-				cd $i
+			if [ -d "$i" ];then
+				cd "$i"
 				foreign
 				cd ..
-			elif [[ $(not_owned_by_user "$i" "$user") ]];then
+			elif not_owned_by_user "$i" "$user";then
 				echo "$PWD/$i"
 			fi
 		fi
@@ -32,3 +37,4 @@ foreign()
 eval cd ~"$user" 2>/dev/null ||\
 	{ echo "No such directory or no rights for: $1"; exit 1; }
 foreign
+IFS=$saveifs
