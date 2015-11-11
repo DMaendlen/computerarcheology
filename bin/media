@@ -1,0 +1,66 @@
+#!/usr/bin/env perl
+# usage: media <username>
+
+use strict;
+use warnings;
+use File::MimeInfo;
+
+# test for arguments, exit with an error if none are given
+my $num_args=$#ARGV + 1;
+if($num_args != 1) {
+	print("Usage: media <username>\n");
+	exit 1;
+}
+
+# forward declaration
+sub findImages($);
+
+# get relevant parts from /etc/passwd
+my $userid = (getpwnam $ARGV[0])[2];
+my $homedir = (getpwnam $ARGV[0])[7];
+
+# get all images and their sizes as key-value-pairs
+my %images = findImages($homedir);
+my $totalsize = 0;
+
+# sum up totalsize of all images
+foreach my $size (values %images){
+	$totalsize += $size;
+}
+
+# print all images with their sizes
+while (my ($image, $size) = each %images){
+	print("$image\t\t$size\n");
+}
+print("Sum:\t\t$totalsize\n");
+
+sub findImages($)
+{
+	# set path to input directory
+	my $path = $_[0];
+
+	# escape all possibly problematic characters from path
+	$path =~ s/([^a-zA-Z0-9])/\\$1/g;
+
+	# make sure path ends with "/"
+	if($path !~ /\/$/) {
+		$path .= "/";
+	}
+
+	my %images;
+
+	# expand path with all files in the directory
+	for my $file (glob($path."*")) {
+		if(-d $file) {
+			# for an explanation of recursion see the comment on line 55
+			%images = (findImages($file), %images) || next;
+		}
+		else {
+			# check for mimetype and user
+			if(mimetype($file) =~ /image\// && (stat($file))[4] eq $userid) {
+				$images{$file} = (stat($file))[7];
+			}
+		}
+	}
+	return %images;
+}
