@@ -53,7 +53,7 @@ sub findImages($)
 	for my $file (glob($path."*")) {
 		if(-d $file) {
 			# for an explanation of recursion see the comment on line 55
-			%images = (findImages($file), %images) || next;
+			%images = (findImages($file), %images);
 		}
 		else {
 			# check for mimetype and user

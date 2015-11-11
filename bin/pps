@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+# usage: pps
+
+use strict;
+use warnings;
+
+my $path = "/proc/"
+
+for my $proc (glob($path."*")) {
+	print($proc);
+}
