@@ -1,11 +1,58 @@
 #!/usr/bin/env perl
 # usage: pps
+#
+# emulates `ps -axl`
+# ps a: list All processes
+# ps x: don't require TTYs
+# ps l: BSD long format
+#
+# Sample output:
+# F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
+# 4     0     1     0  20   0 187048  5552 ?      Ss   ?          0:01
+#       /sbin/init
+# 
 
 use strict;
 use warnings;
 
-my $path = "/proc/"
+# path for proc
+my $path="/proc";
 
-for my $proc (glob($path."*")) {
-	print($proc);
+# declare functions ahead
+sub readStat;
+sub readProc;
+
+sub readProc {
+	my @processStats;
+	# read all dirs in $path
+	opendir PROC, $path or die "Can't open directory '$path': $!";
+	while ( my $dir = readdir PROC ) {
+		next if $dir !~/^\d+$/;
+		#next if $dir !~/^781$/;
+		my $temphash = {$dir, readStat($dir)};
+		push @processStats, $temphash;
+	}
+	closedir PROC;
+
+	return @processStats;
+}
+
+use Data::Dumper;
+print Dumper(readProc);
+
+sub readStat {
+	my $currentproc = shift(@_);
+	my $file = "${path}/$currentproc/status";
+	open FILE, $file or warn "Can't open '$file': $!";
+	my $status = {};
+	while (my $line = <FILE>) {
+		next if $line =~ /:\s+$/;
+		chomp $line;
+		my ($k, $v) = split /:\s+/, $line, 2;
+		my @v = split /\s+/, $v;
+		$status->{$k} = [ @v ];
+	}
+	close FILE;
+
+	return $status;
 }
