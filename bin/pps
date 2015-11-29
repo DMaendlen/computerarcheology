@@ -10,26 +10,166 @@
 # F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
 # 4     0     1     0  20   0 187048  5552 ?      Ss   ?          0:01
 #       /sbin/init
-# 
 
 use strict;
 use warnings;
+use POSIX;
 
-# path for proc
-my $path="/proc";
+# read /proc/[pid]/stat
+# @param: $pid
+# @return: hash containing info for pid, state, ppid, tty, flags, priority,
+# nice, time
+sub readStat {
+	# where are we?
+	my $currentproc = shift(@_);
 
-# declare functions ahead
-sub readStat;
-sub readProc;
+	# file handling
+	my $file = "/proc/${currentproc}/stat";
+	open FILE, $file or warn "Can't open '$file': $!";
+	my $line = <FILE>;
+	close FILE;
+	chomp $line;
 
+	# read relevant info from stat
+	my @rawStats = split(/\s+/, $line);
+	my ($pid, $state, $ppid, $tty, $flags, $priority, $nice, $time) = @rawStats[0, 2, 3, 6, 8, 17, 18, 21];
+
+	# time-stuff, not sure about this.
+	my $clock_ticks = POSIX::sysconf( &POSIX::_SC_CLK_TCK  );
+	$time /= ($clock_ticks * 10);
+	my $seconds = $time % 60;
+	$time /= 60;
+	my $minutes = $time% 60;
+	$time /= 60;
+	my $hours = $time% 24;
+	$time = sprintf("%0d:%02d", $minutes, $seconds);
+
+	# F field looks at the first character of the flags-field, evidently
+	$flags = substr($flags, 0, 1);
+
+	# return a hash of the values we found
+	my $temphash = {};
+	$temphash->{'pid'} = $pid;
+	$temphash->{'state'} = $state;
+	$temphash->{'ppid'} = $ppid;
+	$temphash->{'tty'} = $tty;
+	$temphash->{'flags'} = $flags;
+	$temphash->{'priority'} = $priority;
+	$temphash->{'nice'} = $nice;
+	$temphash->{'time'} = $time;
+
+	return $temphash;
+}
+
+# read /proc/[pid]/cmdline, if nothing is found read /proc/[pid]/stat
+# @param: $pid
+# @return: commandline of process
+sub readCommand {
+	#where are we
+	my $currentproc = shift(@_);
+	
+	#filehandling
+	my $file = "/proc/${currentproc}/cmdline";
+	open FILE, $file or warn "Can't open '$file': $!";
+	my $line = <FILE>;
+	close FILE;
+
+	# return early if we found something worthwile
+	if($line) {
+		chomp $line;
+		return $line;
+	}
+
+	# use a field in /proc/[pid]/stat if we didn't find anything
+	$file = "/proc/${currentproc}/stat";
+	open FILE, $file or warn "Can't open '$file': $!";
+	$line = <FILE>;
+	close FILE;
+	my $cmd = (split(/\s+/, $line))[1];
+	return $cmd;
+}
+
+# read /proc/[pid]/status to get uid
+# @param: $pid
+# @return: effective uid of process
+sub readUid{
+	my $currentproc = shift(@_);
+	my $uid = "?";
+	my $file = "/proc/${currentproc}/status";
+	open FILE, $file or warn "Can't open '$file': $!";
+	while (my $line = <FILE>) {
+		next if $line !~/^Uid:/;
+		chomp $line;
+		$uid = (split(/\s+/, $line))[2];
+	}
+	close FILE;
+	return $uid;
+}
+
+# read /proc/[pid]/status to get VmSize
+# @param: $pid
+# @return: VmSize of process
+sub readVsize {
+	my $currentproc = shift(@_);
+	my $vsize = "0";
+	my $file = "/proc/${currentproc}/status";
+	open FILE, $file or warn "Can't open '$file': $!";
+	while (my $line = <FILE>) {
+		next if $line !~/VmSize:/;
+		chomp $line;
+		$vsize = (split(/\s+/, $line))[1];
+	}
+	close FILE;
+	return $vsize;
+}
+
+# read /proc/[pid]/status to get VmRSS
+# @param: $pid
+# @return: VmRSS
+sub readRss {
+	my $currentproc = shift(@_);
+	my $rss = "0";
+	my $file = "/proc/${currentproc}/status";
+	open FILE, $file or warn "Can't open '$file': $!";
+	while (my $line = <FILE>) {
+		next if $line !~/VmRSS/;
+		chomp $line;
+		$rss= (split(/\s+/, $line))[1];
+	}
+	close FILE;
+	return $rss;
+}
+
+# read /proc/[pid]/wchan
+# @param: $pid
+# @return: Wchan
+sub readWchan {
+	my $currentproc = shift(@_);
+	my $wchan = "?";
+	my $file = "/proc/${currentproc}/wchan";
+	open FILE, $file or warn "Can't open '$file': $!";
+	while (my $line = <FILE>) {
+		$wchan = $line;
+	}
+	close FILE;
+	return $wchan;
+}
+
+# read /proc/
+# @param: -/-
+# @return: array of process-hashes (key: $pid, value: %statusvalues)
 sub readProc {
 	my @processStats;
 	# read all dirs in $path
-	opendir PROC, $path or die "Can't open directory '$path': $!";
+	opendir PROC, "/proc/" or die "Can't open directory '/proc/': $!";
 	while ( my $dir = readdir PROC ) {
 		next if $dir !~/^\d+$/;
-		#next if $dir !~/^781$/;
 		my $temphash = {$dir, readStat($dir)};
+		$temphash->{$dir}->{command} = readCommand($dir);
+		$temphash->{$dir}->{uid} = readUid($dir);
+		$temphash->{$dir}->{vsize} = readVsize($dir);
+		$temphash->{$dir}->{rss} = readRss($dir);
+		$temphash->{$dir}->{wchan} = readWchan($dir);
 		push @processStats, $temphash;
 	}
 	closedir PROC;
@@ -37,22 +177,43 @@ sub readProc {
 	return @processStats;
 }
 
-use Data::Dumper;
-print Dumper(readProc);
-
-sub readStat {
-	my $currentproc = shift(@_);
-	my $file = "${path}/$currentproc/status";
-	open FILE, $file or warn "Can't open '$file': $!";
-	my $status = {};
-	while (my $line = <FILE>) {
-		next if $line =~ /:\s+$/;
-		chomp $line;
-		my ($k, $v) = split /:\s+/, $line, 2;
-		my @v = split /\s+/, $v;
-		$status->{$k} = [ @v ];
+# print results
+my @processes = readProc();
+my $headline = "F\tUID\tPID\tPPID\tPRI\tNI\tVSZ\tRSS\tWCHAN\tSTAT\tTTY\t\tTIIME\tCommand\n";
+print($headline);
+for my $proc (@processes) {
+	foreach my $pid (keys %{$proc}) {
+		my $out = '';
+		my $pidref = $proc->{$pid};
+		next if !exists $pidref->{flags};
+		next if !exists $pidref->{uid};
+		next if !exists $pidref->{pid};
+		next if !exists $pidref->{ppid};
+		next if !exists $pidref->{priority};
+		next if !exists $pidref->{nice};
+		next if !exists $pidref->{vsize};
+		next if !exists $pidref->{rss};
+		next if !exists $pidref->{wchan};
+		next if !exists $pidref->{state};
+		next if !exists $pidref->{tty};
+		next if !exists $pidref->{time};
+		next if !exists $pidref->{command};
+		$out .= $pidref->{flags} . "\t";
+		$out .= $pidref->{uid} . "\t";
+		$out .= $pidref->{pid} . "\t";
+		$out .= $pidref->{ppid} . "\t";
+		$out .= $pidref->{priority} ."\t";
+		$out .= $pidref->{nice} . "\t";
+		$out .= $pidref->{vsize} ."\t";
+		$out .= $pidref->{rss} . "\t";
+		$out .= $pidref->{wchan} . "\t";
+		$out .= $pidref->{state} . "\t";
+		$out .= $pidref->{tty} . "\t\t";
+		$out .= $pidref->{time} . "\t";
+		$out .= substr($pidref->{command}, 0, 50);
+		$out =~ s/\000/ /g;
+		$out =~ s/\s$//;
+		$out .= "\n";
+		print($out);
 	}
-	close FILE;
-
-	return $status;
 }
