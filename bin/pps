@@ -233,7 +233,7 @@ for my $proc (@processes) {
 		my $out = '';
 		my $pidref = $proc->{$pid};
 		$out = join("\t",
-			$pidref->{flags},
+			#$pidref->{flags},
 			$pidref->{uid},
 			$pidref->{pid},
 			$pidref->{ppid},
