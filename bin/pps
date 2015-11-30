@@ -1,7 +1,7 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 # usage: pps
 #
-# emulates `ps -axl`
+# emulates `ps axl`
 # ps a: list All processes
 # ps x: don't require TTYs
 # ps l: BSD long format
@@ -10,117 +10,157 @@
 # F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
 # 4     0     1     0  20   0 187048  5552 ?      Ss   ?          0:01
 #       /sbin/init
+#
+#
+# omitted F-field, due to this being unsolvable with just information from man
+# proc
 
 use strict;
 use warnings;
+use Switch;
 use POSIX;
+use Data::Dumper;
+
+# beautify strings by turning NULL into space and cut off trailing spaces
+# @param: $string
+# @return: $string
+sub spaceCosmetics {
+	my ($string) = @_;
+	$string =~ s/\000/ /g;
+	$string =~ s/\s$//;
+	chomp $string;
+	return $string;
+}
 
 # read /proc/[pid]/stat
 # @param: $pid
 # @return: hash containing info for pid, state, ppid, tty, flags, priority,
 # nice, time
 sub readStat {
-	# where are we?
-	my $currentproc = shift(@_);
-
-	# file handling
-	my $file = "/proc/${currentproc}/stat";
-	open FILE, $file or warn "Can't open '$file': $!";
+	my ($currentproc) = @_;
+	my $filename = "/proc/${currentproc}/stat";
+	open FILE, $filename or do{
+		warn "Can't open '$filename': $!";
+		return {};
+	};
 	my $line = <FILE>;
 	close FILE;
 	chomp $line;
 
 	# read relevant info from stat
 	my @rawStats = split(/\s+/, $line);
-	my ($pid, $state, $ppid, $tty, $flags, $priority, $nice, $time) = @rawStats[0, 2, 3, 6, 8, 17, 18, 21];
+	my ($pid, $state, $ppid, $tty_nr, $flags, $utime, $stime, $priority,
+		$nice) = @rawStats[0, 2, 3, 6, 8, 13, 14, 17, 18];
 
-	# time-stuff, not sure about this.
+	# time is calculated from utime+stime (given in clock-ticks)
 	my $clock_ticks = POSIX::sysconf( &POSIX::_SC_CLK_TCK  );
-	$time /= ($clock_ticks * 10);
-	my $seconds = $time % 60;
-	$time /= 60;
-	my $minutes = $time% 60;
-	$time /= 60;
-	my $hours = $time% 24;
-	$time = sprintf("%0d:%02d", $minutes, $seconds);
+	my $cumulative_cpu_time = $utime + $stime;
+	my $cumulative_cpu_time_int = int ($cumulative_cpu_time / $clock_ticks);
+	my $cumulative_cpu_seconds = $cumulative_cpu_time_int % 60;
+	my $cumulative_cpu_minutes = int ($cumulative_cpu_time_int / 60);
+	my $cputime = sprintf("%0d:%02d", $cumulative_cpu_minutes,
+		$cumulative_cpu_seconds);
 
 	# F field looks at the first character of the flags-field, evidently
-	$flags = substr($flags, 0, 1);
+	# this is wrong. TODO
+	# $flags = substr($flags, 0, 1);
+
+	# calculating tty from tty_nr
+	my $major_mask = 0xFF00;
+	my $minor_mask = 0xFFFF00FF;
+	my $tty_major = ($tty_nr & $major_mask) >> 8;
+	my $tty_minor = $tty_nr & $minor_mask;
+	my $tty = '?';
+	if ($tty_major eq 4) {
+		$tty = 'tty' . $tty_minor;
+	} elsif ($tty_major >= 136 && $tty_major <= 143) {
+		$tty = 'pts/' . $tty_minor;
+	}
 
 	# return a hash of the values we found
-	my $temphash = {};
-	$temphash->{'pid'} = $pid;
-	$temphash->{'state'} = $state;
-	$temphash->{'ppid'} = $ppid;
-	$temphash->{'tty'} = $tty;
-	$temphash->{'flags'} = $flags;
-	$temphash->{'priority'} = $priority;
-	$temphash->{'nice'} = $nice;
-	$temphash->{'time'} = $time;
+	my $result = {};
+	$result->{'pid'} = $pid;
+	$result->{'state'} = $state;
+	$result->{'ppid'} = $ppid;
+	$result->{'tty'} = $tty;
+	#$result->{'flags'} = $flags;
+	$result->{'priority'} = $priority;
+	$result->{'nice'} = $nice;
+	$result->{'time'} = $cputime;
+	foreach my $stat (keys %{$result}) {
+		$result->{$stat} = spaceCosmetics($result->{$stat});
+	}
 
-	return $temphash;
+	return $result;
 }
 
 # read /proc/[pid]/cmdline, if nothing is found read /proc/[pid]/stat
 # @param: $pid
 # @return: commandline of process
 sub readCommand {
-	#where are we
-	my $currentproc = shift(@_);
-	
-	#filehandling
-	my $file = "/proc/${currentproc}/cmdline";
-	open FILE, $file or warn "Can't open '$file': $!";
+	my ($currentproc) = @_;
+	my $filename = "/proc/${currentproc}/cmdline";
+	open FILE, $filename or do {
+		warn "Can't open '$filename': $!";
+		return '';
+	};
 	my $line = <FILE>;
 	close FILE;
 
 	# return early if we found something worthwile
 	if($line) {
-		chomp $line;
+		$line = spaceCosmetics($line);
 		return $line;
 	}
 
 	# use a field in /proc/[pid]/stat if we didn't find anything
-	$file = "/proc/${currentproc}/stat";
-	open FILE, $file or warn "Can't open '$file': $!";
+	$filename = "/proc/${currentproc}/stat";
+	open FILE, $filename or do {
+		warn "Can't open '$filename': $!";
+		return '';
+	};
 	$line = <FILE>;
 	close FILE;
 	my $cmd = (split(/\s+/, $line))[1];
-	return $cmd;
+	return spaceCosmetics($cmd);
 }
 
 # read /proc/[pid]/status to get uid
 # @param: $pid
 # @return: effective uid of process
 sub readUid{
-	my $currentproc = shift(@_);
+	my ($currentproc) = @_;
 	my $uid = "?";
-	my $file = "/proc/${currentproc}/status";
-	open FILE, $file or warn "Can't open '$file': $!";
+	my $filename = "/proc/${currentproc}/status";
+	open FILE, $filename or do {
+		warn "Can't open '$filename': $!";
+		return '';
+	};
 	while (my $line = <FILE>) {
 		next if $line !~/^Uid:/;
-		chomp $line;
 		$uid = (split(/\s+/, $line))[2];
 	}
 	close FILE;
-	return $uid;
+	return spaceCosmetics($uid);
 }
 
 # read /proc/[pid]/status to get VmSize
 # @param: $pid
 # @return: VmSize of process
 sub readVsize {
-	my $currentproc = shift(@_);
+	my ($currentproc) = @_;
 	my $vsize = "0";
-	my $file = "/proc/${currentproc}/status";
-	open FILE, $file or warn "Can't open '$file': $!";
+	my $filename = "/proc/${currentproc}/status";
+	open FILE, $filename or do{
+		warn "Can't open '$filename': $!";
+		return '';
+	};
 	while (my $line = <FILE>) {
 		next if $line !~/VmSize:/;
-		chomp $line;
 		$vsize = (split(/\s+/, $line))[1];
 	}
 	close FILE;
-	return $vsize;
+	return spaceCosmetics($vsize);
 }
 
 # read /proc/[pid]/status to get VmRSS
@@ -129,15 +169,17 @@ sub readVsize {
 sub readRss {
 	my $currentproc = shift(@_);
 	my $rss = "0";
-	my $file = "/proc/${currentproc}/status";
-	open FILE, $file or warn "Can't open '$file': $!";
+	my $filename = "/proc/${currentproc}/status";
+	open FILE, $filename or do{
+		warn "Can't open '$filename': $!";
+		return '';
+	};
 	while (my $line = <FILE>) {
 		next if $line !~/VmRSS/;
-		chomp $line;
 		$rss= (split(/\s+/, $line))[1];
 	}
 	close FILE;
-	return $rss;
+	return spaceCosmetics($rss);
 }
 
 # read /proc/[pid]/wchan
@@ -146,13 +188,16 @@ sub readRss {
 sub readWchan {
 	my $currentproc = shift(@_);
 	my $wchan = "?";
-	my $file = "/proc/${currentproc}/wchan";
-	open FILE, $file or warn "Can't open '$file': $!";
+	my $filename = "/proc/${currentproc}/wchan";
+	open FILE, $filename or do{
+		warn "Can't open '$filename': $!";
+		return '';
+	};
 	while (my $line = <FILE>) {
 		$wchan = $line;
 	}
 	close FILE;
-	return $wchan;
+	return spaceCosmetics($wchan);
 }
 
 # read /proc/
@@ -161,16 +206,17 @@ sub readWchan {
 sub readProc {
 	my @processStats;
 	# read all dirs in $path
-	opendir PROC, "/proc/" or die "Can't open directory '/proc/': $!";
+	my $procdir = "/proc/";
+	opendir PROC, $procdir or die "Can't open directory '$procdir': $!";
 	while ( my $dir = readdir PROC ) {
 		next if $dir !~/^\d+$/;
-		my $temphash = {$dir, readStat($dir)};
-		$temphash->{$dir}->{command} = readCommand($dir);
-		$temphash->{$dir}->{uid} = readUid($dir);
-		$temphash->{$dir}->{vsize} = readVsize($dir);
-		$temphash->{$dir}->{rss} = readRss($dir);
-		$temphash->{$dir}->{wchan} = readWchan($dir);
-		push @processStats, $temphash;
+		my $result = {$dir, readStat($dir)};
+		$result->{$dir}->{command} = readCommand($dir);
+		$result->{$dir}->{uid} = readUid($dir);
+		$result->{$dir}->{vsize} = readVsize($dir);
+		$result->{$dir}->{rss} = readRss($dir);
+		$result->{$dir}->{wchan} = readWchan($dir);
+		push @processStats, $result;
 	}
 	closedir PROC;
 
@@ -179,40 +225,28 @@ sub readProc {
 
 # print results
 my @processes = readProc();
-my $headline = "F\tUID\tPID\tPPID\tPRI\tNI\tVSZ\tRSS\tWCHAN\tSTAT\tTTY\t\tTIIME\tCommand\n";
+my $headline =	"UID\tPID\tPPID\tPRI\tNI\tVSZ\tRSS\tWCHAN" .
+		"\tSTAT\tTTY\tTIME\tCommand\n";
 print($headline);
 for my $proc (@processes) {
 	foreach my $pid (keys %{$proc}) {
 		my $out = '';
 		my $pidref = $proc->{$pid};
-		next if !exists $pidref->{flags};
-		next if !exists $pidref->{uid};
-		next if !exists $pidref->{pid};
-		next if !exists $pidref->{ppid};
-		next if !exists $pidref->{priority};
-		next if !exists $pidref->{nice};
-		next if !exists $pidref->{vsize};
-		next if !exists $pidref->{rss};
-		next if !exists $pidref->{wchan};
-		next if !exists $pidref->{state};
-		next if !exists $pidref->{tty};
-		next if !exists $pidref->{time};
-		next if !exists $pidref->{command};
-		$out .= $pidref->{flags} . "\t";
-		$out .= $pidref->{uid} . "\t";
-		$out .= $pidref->{pid} . "\t";
-		$out .= $pidref->{ppid} . "\t";
-		$out .= $pidref->{priority} ."\t";
-		$out .= $pidref->{nice} . "\t";
-		$out .= $pidref->{vsize} ."\t";
-		$out .= $pidref->{rss} . "\t";
-		$out .= $pidref->{wchan} . "\t";
-		$out .= $pidref->{state} . "\t";
-		$out .= $pidref->{tty} . "\t\t";
-		$out .= $pidref->{time} . "\t";
-		$out .= substr($pidref->{command}, 0, 50);
-		$out =~ s/\000/ /g;
-		$out =~ s/\s$//;
+		$out = join("\t",
+			$pidref->{flags},
+			$pidref->{uid},
+			$pidref->{pid},
+			$pidref->{ppid},
+			$pidref->{priority},
+			$pidref->{nice},
+			$pidref->{vsize},
+			$pidref->{rss},
+			$pidref->{wchan},
+			$pidref->{state},
+			$pidref->{tty},
+			$pidref->{time},
+			substr($pidref->{command}, 0, 50)
+		);
 		$out .= "\n";
 		print($out);
 	}
