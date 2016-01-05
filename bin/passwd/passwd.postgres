@@ -1,1 +1,0 @@
-postgres:x:26:26:PostgreSQL Server:/var/lib/pgsql:/bin/bash

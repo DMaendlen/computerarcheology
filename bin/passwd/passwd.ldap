@@ -1,1 +1,0 @@
-ldap:x:55:55:LDAP User:/var/lib/ldap:/bin/false

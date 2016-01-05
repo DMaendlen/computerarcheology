@@ -1,1 +1,0 @@
-rpm:x:77:77:RPM user:/var/lib/rpm:/sbin/nologin
