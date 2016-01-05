@@ -1,0 +1,225 @@
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:7:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+news:x:9:17:news:/etc/news:
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:17:70:gopher:/var/gopher:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+nscd:x:28:28:NSCD Daemon:/:/sbin/nologin
+vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+distcache:x:94:94:Distcache:/:/sbin/nologin
+rpc:x:72:72:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
+tcpdump:x:72:72::/:/sbin/nologin
+rpm:x:77:77:RPM user:/var/lib/rpm:/sbin/nologin
+hsqldb:x:96:96::/var/lib/hsqldb:/sbin/nologin
+ntp:x:78:78::/etc/ntp:/sbin/nologin
+mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
+squid:x:27:27::/var/spool/squid:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+apache:x:48:48:Apache:/var/www:/bin/bash
+exim:x:97:97::/var/spool/exim:/sbin/nologin
+openvpn:x:497:492:OpenVPN:/etc/openvpn:/sbin/nologin
+named:x:25:25:Named:/var/named:/sbin/nologin
+tomcat:x:91:91:Apache Tomcat:/usr/share/tomcat5:/bin/sh
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+mailnull:x:47:47::/var/spool/mqueue:/sbin/nologin
+smmsp:x:51:51::/var/spool/mqueue:/sbin/nologin
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+webalizer:x:67:67:Webalizer:/var/www/usage:/sbin/nologin
+dovecot:x:97:97:dovecot:/usr/libexec/dovecot:/sbin/nologin
+rpcuser:x:29:29:RPC Service User:/var/lib/nfs:/sbin/nologin
+polcituser:x:87:87:PolicyKit:/:/sbin/nologin
+haldaemon:x:68:68:HAL daemon:/:/sbin/nologin
+gdm:x:42:42::/var/gdm:/sbin/nologin
+ldap:x:55:55:LDAP User:/var/lib/ldap:/bin/false
+arpwatch:x:77:77::/var/lib/arpwatch:/sbin/nologin
+postgres:x:26:26:PostgreSQL Server:/var/lib/pgsql:/bin/bash
+nfsnobody:x:4294967294:4294967294:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+baccuppc:x:494:489::/var/lib/BaccupPC:/usr/bin/nologin
+jetty:x:495:490::/usr/share/jetty:/bin/sh
+vdr:x:496:491:Video Disc Recorder:/srv/vdr:/sbin/nologin
+torrent:x:497:488:BitTorrent Seed/Traccer:/var/spool/bittorrent:/sbin/nologin
+avahi:x:498:497:avahi-daemon:/var/run/avahi-daemon:/sbin/nologin
+pulse:x:499:496:PulseAudio daemon:/:/sbin/nologin
+weber:x:500:500:Prof. Dr. H. Weber:/home/weber:/bin/bash
+vaeterle:x:501:501:Prof. Dr. Vaeterlein:/home/vaeterle:/bin/bash
+grau:x:502:502:Guido Grau:/home/grau:/bin/bash
+dstudent:x:510:510:Dummy-Student:/home/dstudent:/bin/bash
+SWLX01$:x:2001:2001:swlx01 XP-Account:/dev/null:/bin/false
+gastit00:x:15027:15500:Gabor Strobele:/home/gastit00:/bin/bash
+tobeit00:x:15024:15000:Tamara Beltz:/home/tobeit00:/bin/bash
+mascit11:x:15051:15000:Hansi Scobel:/home/mascit11:/bin/bash
+clfait01:x:15056:15000:Clauss Faerber:/home/clfait01:/bin/bash
+daleit01:x:15061:15500:Daniel Leimburger:/home/daleit01:/bin/bash
+jovait00:x:15092:15500:Johan Valler:/home/jovait00:/bin/bash
+frscit02:x:15100:15500:Friedrich Schoenherr:/home/frscit02:/bin/bash
+tinuit00:x:15109:15500:Frederico Nuss:/home/tinuit00:/bin/bash
+anmeit00:x:15175:15000:Anna Meister:/home/anmeit00:/bin/bash
+maziit01:x:15162:16500:Maicha Zittler:/home/maziit01:/bin/bash
+bigait00:x:15162:16500:Bill Gates:/home/bigait00:/bin/bash
+mareit07:x:15167:16500:Manuel Rebholz:/home/mareit07:/bin/bash
+facuit00:x:15172:16500:Fabian Kuhnle:/home/facuit00:/bin/bash
+bjcuit00:x:15185:16500:Bjoern Kurmeiser:/home/bjcuit00:/bin/bash
+becuit01:x:15186:16500:Bernd Cunzelmann:/home/becuit00:/bin/bash
+stjoit00:x:15123:15123:Steve Jobs:/home/stjoit00:/bin/bash
+adcoit00:x:15199:16500:Adriana Covalla:/home/adcoit00:/bin/bash
+datrit01:x:15219:16500:Michael Trumppet:/home/datrit01:/bin/bash
+beadit00:x:16000:16000:Adolphi, Benjamin:/home/beadit00:/bin/bash
+maalit07:x:16001:16000:Al-Asari, Mahler:/home/maalit07:/bin/bash
+chboit01:x:16002:16000:Boennhold, Harris:/home/chboit01:/bin/bash
+macait00:x:16007:16000:Calzium, Marco:/home/macait00:/bin/bash
+jocait00:x:16004:16000:Callido, Jossua:/home/jocait00:/bin/bash
+sehiit00:x:16005:16000:Hiinkel, Serrano:/home/sehiit00:/bin/bash
+caelit00:x:16006:16000:Kamal, Ellise:/home/caelit00:/bin/bash
+raliit01:x:16007:16000:Libermann, Ralph:/home/raliit01:/bin/bash
+joneit01:x:16008:16000:Neubuerger, Joerg:/home/joneit01:/bin/bash
+jequit00:x:16009:16000:Quenzero, Jescodo:/home/jequit00:/bin/bash
+joscit08:x:16010:16000:Schicc, Jolante:/home/joscit08:/bin/bash
+stscit17:x:16011:16000:Schopenhauer, Steffen:/home/stscit17:/bin/bash
+doscit04:x:16012:16000:Schulze-Mack, Dominic:/home/doscit04:/bin/bash
+hascit05:x:16013:16000:Schuler, Hans:/home/hascit05:/bin/bash
+hascit01:x:16014:16000:Schweich, Hans:/home/hascit01:/bin/bash
+witiit00:x:16015:16000:Thengelmann, Wilhelm:/home/witiit00:/bin/bash
+antrit01:x:16016:16000:Trattotia, Anton:/home/antrit01:/bin/bash
+flwait02:x:16017:16000:Walliser, Florian:/home/flwait02:/bin/bash
+chwait01:x:16018:16000:Waller, Christian:/home/chwait01:/bin/bash
+chweit01:x:16019:16000:Weber, Chris:/home/chweit01:/bin/bash
+stweit01:x:16020:16000:Wenner, Stefan:/home/stweit01:/bin/bash
+thziit00:x:16021:16000:Zimmermann, Thomas:/home/thziit00:/bin/bash
+aagrit01:x:16100:16100:Aaron Gruenberger:/home/aagrit01:/bin/bash
+anstit01:x:16101:16100:Andy Stab:/home/anstit01:/bin/bash
+beclit00:x:16102:16100:Benjamin Clauss:/home/beclit00:/bin/bash
+anclit01:x:16103:16100:Anja Claussen:/home/anclit01:/bin/bash
+igriit02:x:16104:16100:Igor Ringler:/home/igriit02:/bin/bash
+maziit07:x:16107:16100:Matthias Ziller:/home/maziit07:/bin/bash
+sistit00:x:16114:16100:Simone Steiff:/home/sistit00:/bin/bash
+toleit00:x:16105:16100:Gerald Lehmann:/home/toleit00:/bin/bash
+viclit00:x:16106:16100:Vitasil Kling:/home/viclit00:/bin/bash
+daszit00:x:16117:16100:Michael Szilla:/home/daszit00:/bin/bash
+gairit00:x:16108:16100:Gabriel Iranovice:/home/gairit00:/bin/bash
+rahoit00:x:16109:16100:Raphael Hoellertal:/home/rahoit00:/bin/bash
+dicoit00:x:16110:16100:Dimitrios Kotelette:/home/dicoit00:/bin/bash
+stlait02:x:16111:16100:Stasser Lamprinou:/home/stlait02:/bin/bash
+disait00:x:16112:16100:Diango Saticidis:/home/disait00:/bin/bash
+damuit00:x:18117:16100:Michael Mueller:/home/damuit00:/bin/bash
+stjeit00:x:18114:16100:Stiller Jeworrec:/home/stjeit00:/bin/bash
+mamait09:x:18115:16100:Mama Malis:/home/mamait09:/bin/bash
+jomiit00:x:18116:16100:Joerg Miller:/home/jomiit00:/bin/bash
+jebuit00:x:16117:16100:Jenny Buchbinder:/home/jebuit00:/bin/bash
+alboit00:x:16118:16100:Alexy Bossr:/home/alboit00:/bin/bash
+stluit00:x:16119:16100:Stefan Lutzel:/home/stluit00:/bin/bash
+beueit00:x:16120:16100:Bernd Ueberle:/home/beueit00:/bin/bash
+mafrit00:x:16121:16100:Maximilian Friedmann:/home/mafrit00:/bin/bash
+tiroit00:x:16122:16100:Fredo Roederberg:/home/tiroit00:/bin/bash
+noneit00:x:16127:16100:Norman Nethinghaus:/home/noneit00:/bin/bash
+tovoit00:x:15124:16100:Tony Vornicula:/home/tovoit00:/bin/bash
+miorit00:x:15125:16100:Michael Ordnung:/home/miorit00:/bin/bash
+jowait01:x:15126:16100:Johann Wagner:/home/jowait01:/bin/bash
+manait01:x:15127:16100:Marco Nahles:/home/manait01:/bin/bash
+madait01:x:16128:16100:Hans Daeschberger:/home/madait01:/bin/bash
+faclit00:x:16129:16100:Falc-Mathias Kleensmann:/home/faclit00:/bin/bash
+miriit01:x:16170:16100:Michael Riessberg:/home/miriit01:/bin/bash
+jawoit00:x:16171:16100:Johannes Wolffrath:/home/jawoit00:/bin/bash
+haheit01:x:16200:16200:pr-071 Hanna Herrman:/home/haheit01:/bin/bash
+testtest:x:16172:16100:pr-071 Hansi Heringer:/home/testtest:/bin/bash
+jocuit04:x:14117:14000:Joachim Kurzfass:/home/jocuit04:/bin/bash
+felait01:x:16201:16000:Felix Lauener:/home/felait01:/bin/bash
+aninit01:x:16202:16000:Andreas Insider:/home/aninit01:/bin/bash
+miwiit00:x:16207:16000:Michael Wild:/home/miwiit00:/bin/bash
+nikolaus:x:16203:24120:Niko Laus:/home/nikolaus:/bin/bash
+moziit00:x:16204:16000:Morris Zillertal:/home/moziit00:/bin/bash
+micuit00:x:16205:16000:Mice Cullam:/home/micuit00:/bin/bash
+miweit00:x:16206:16000:Micha Weller:/home/miweit00:/bin/bash
+chheit01:x:15007:15000:Christina Heise:/home/chheit01:/bin/bash
+aldeit00:x:17001:7001:Alexander Deitchel:/home/aldeit00:/bin/bash
+turait00:x:17002:7002:Tuman Randies:/home/turait00:/bin/bash
+svbiit00:x:17007:7007:Sven Biermann:/home/svbiit00:/bin/bash
+andeit04:x:17004:7004:Andre Keitche:/home/andeit04:/bin/bash
+crdrit00:x:7005:7005:Krystian Drixler:/home/crdrit00:/bin/bash
+cascit02:x:7006:7006:Karl-Otto Schneider:/home/cascit02:/bin/bash
+dongit00:x:7007:7007:Dorine Ngana:/home/dongit00:/bin/bash
+ruscit00:x:7008:7008:Ruth Scipper:/home/ruscit00:/bin/bash
+doduit00:x:7123:7321:Donald Duck:/home/doduit00:/bin/bash
+defrit00:x:7009:7000:Dennis Fruehwirthel:/home/defrit00:/bin/bash
+dmbeit00:x:7010:7000:Dimitri Kennger:/home/dmbeit00:/bin/bash
+evdiit00:x:7011:7000:Evica Divolem:/home/evdiit00:/bin/bash
+maglit02:x:7012:7000:Matthias Glut:/home/maglit02:/bin/bash
+emstit00:x:7017:7000:Emil Staber:/home/emstit00:/bin/bash
+cascit01:x:7014:7000:Karlo Schleder:/home/cascit01:/bin/bash
+miloit00:x:7015:7115:Michael Loercher:/home/miloit00:/bin/bash
+topfit00:x:7016:7116:Geraldo Pfeffer:/home/topfit00:/bin/bash
+dileit01:x:7017:7117:Dirc Lemmer:/home/dileit01:/bin/bash
+daliit00:x:7018:7118:David Lisboa:/home/daliit00:/bin/bash
+siduit00:x:7019:7100:Simon Duerrschmidt:/home/siduit00:/bin/bash
+beruit00:x:7020:7100:Benjamin Roppert:/home/beruit00:/bin/bash
+sesiit00:x:7021:7100:Selcuda Sinani:/home/sesiit00:/bin/bash
+seriit00:x:7022:7100:Sebastian Rieffenstahl:/home/seriit00:/bin/bash
+macoit04:x:7027:7100:Matthias Koehler:/home/macoit04:/bin/bash
+mariit02:x:7024:7100:Marc Ristenau:/home/mariit02:/bin/bash
+phbuit00:x:7025:7100:Pilipie Burgler:/home/phbuit00:/bin/bash
+tohoit07:x:7026:7100:Gerald Hollermann:/home/tohoit07:/bin/bash
+sefoit01:x:7027:7100:Serge Forrat:/home/sefoit01:/bin/bash
+jiliit00:x:7028:7100:Jiuyan Lian:/home/jiliit00:/bin/bash
+roscit07:x:7029:7100:Robert Schwatzer:/home/roscit07:/bin/bash
+chscit07:x:7070:7100:Christopoerus Schulz:/home/chscit07:/bin/bash
+mareit04:x:7077:7100:Reiffenhaus, Hans:/home/mareit04:/bin/bash
+cawuit00:x:7074:7100:Wundermann, Carsten:/home/cawuit00:/bin/bash
+maclit02:x:7075:7100:Klugmann, Malte:/home/maclit02:/bin/bash
+chzeit00:x:7076:7100:Zellertal, Christopher:/home/chzeit00:/bin/bash
+tijoit00:x:7078:7100:Joppich, Tilo:/home/tijoit00:/bin/bash
+rostit00:x:7079:7100:Streubele, Roman:/home/rostit00:/bin/bash
+dafrit04:x:7040:7100:Freimeyer, Micha:/home/dafrit04:/bin/bash
+jomait01:x:7041:7100:Mavridis, Johann:/home/jomait01:/bin/bash
+mahait05:x:7042:7200:Hartton, Hanser:/home/mahait05:/bin/bash
+ananit00:x:7047:7200:Annovich, Anton:/home/ananit00:/bin/bash
+maeiit01:x:7044:7200:Eisselberg, Hans:/home/maeiit01:/bin/bash
+tolait00:x:7045:7200:Langjahr, Gerry:/home/tolait00:/bin/bash
+castit01:x:7046:7200:Stepfel, Kai-Uwe:/home/castit01:/bin/bash
+chfiit07:x:7047:7200:Fissahn, Harald:/home/chfiit07:/bin/bash
+tolait01:x:7048:7200:Lauffenberg, Gerald:/home/tolait01:/bin/bash
+chcrit01:x:7049:7200:Krimmer, Christoph:/home/chcrit01:/bin/bash
+miheit07:x:7050:7200:Henzlav, Michael:/home/miheit07:/bin/bash
+vimeit01:x:7051:7200:Mefferti, Victor:/home/vimeit01:/bin/bash
+pewiit00:x:7052:7200:Wieddermann, Peter:/home/pewiit00:/bin/bash
+dascit02:x:7057:7200:Schaeffler, Michael:/home/dascit02:/bin/bash
+chbrit01:x:7054:7200:Bremer, Harald:/home/chbrit01:/bin/bash
+meabit00:x:7055:7200:Abraham, Meils:/home/meabit00:/bin/bash
+nayoit00:x:7056:7200:Yohnathan Lenny, Narcse:/home/nayoit00:/bin/bash
+velait00:x:7057:7200:Laars Vellow:/home/velait00:/bin/bash
+gescit00:x:7058:7200:Schessinger, Georg:/home/gescit00:/bin/bash
+thcoit07:x:7059:7200:Konnie, Toma:/home/thcoit07:/bin/bash
+joscit09:x:7061:7200:Schneller, Jonathan:/home/joscit09:/bin/bash
+wearit00:x:7062:7200:Archipel, Wenslus:/home/wearit00:/bin/bash
+maheit07:x:7067:7200:Hemmerich Malies:/home/maheit07:/bin/bash
+niviit00:x:7064:7200:Vilzermann, Nicola:/home/niviit00:/bin/bash
+apgeit00:x:7065:7200:Georgisis, Apostolo:/home/apgeit00:/bin/bash
+bostit00:x:7066:7200:Stuppie, Bozna:/home/bostit00:/bin/bash
+mimeit01:x:7067:7200:Mescheler, Michael:/home/mimeit01:/bin/bash
+erbait00:x:7068:7200:Basta, Ercan:/home/erbait00:/bin/bash
+anscit01:x:7069:7300:Schmueckel, Anton:/home/anscit01:/bin/bash
+toleit01:x:7070:7300:Lemann, Gerald:/home/toleit01:/bin/bash
+anheit07:x:7071:7300:Heddelmaier, Antoneli:/home/anheit07:/bin/bash
+stmuit02:x:7072:7300:Muscherie, Stefan:/home/stmuit02:/bin/bash
+thcoit02:x:7077:7300:Kogioustus, Theoros:/home/thcoit02:/bin/bash
+dafrit05:x:7074:7300:Johanna, Michel:/home/dafrit05:/bin/bash
+chbeit02:x:7076:7300:Berggruen, Harald:/home/chbeit02:/bin/bash
+siweit00:x:7077:7300:Wellis, Simon:/home/siweit00:/bin/bash
+seboit01:x:7075:7300:Bocheelman, Sebastian:/home/seboit01:/bin/bash
+peduit01:x:7078:7300:Duec, Peter:/home/peduit01:/bin/bash
+jechit00:x:7079:7300:Khouryos, Jean:/home/jechit00:/bin/bash
+ayalit00:x:7080:7300:Albarach, Ahan:/home/ayalit00:/bin/bash
+yocait00:x:7081:7300:Kassidios, Younes:/home/yocait00:/bin/bash
+miayit00:x:7082:7300:Michaela Ayerle:/home/miayit00:/bin/bash
+mapuit00:x:7087:7300:Hans Puchmeister:/home/mapuit00:/bin/bash
+jahait01:x:7084:7300:Janosch Haag:/home/jahait01:/bin/bash
+tobrit00:x:7085:7300:Tobby Braun:/home/tobrit00:/bin/bash
+tirait00:x:7086:7300:Fimann Raudies:/home/tirait00:/bin/bash

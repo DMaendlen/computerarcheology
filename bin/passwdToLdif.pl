@@ -33,7 +33,7 @@ close(INFILE);
 opendir(PASSWD, "passwd") or die "Can't open passwd: $!";
 while (my $file = readdir PASSWD) {
 	my ($unused, $uid) = split(/\./, $file);
-	`/usr/share/openldap/migration/migrate_passwd.pl $file "ldif/$uid.ldif"`
+	`/usr/share/openldap/migration/migrate_passwd.pl "passwd/$file" "ldif/$uid.ldif"`
 }
 closedir PASSWD;
 
