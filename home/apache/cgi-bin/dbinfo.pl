@@ -24,10 +24,10 @@ my $sanitizedPw = $rawPw;
 
 if ($rawUid) {
 	# sanitize Input
-	my $OK_CHARS='-a-zA-Z0-9_.@\$';
-	$sanitizedPw =~ s/\%24/\$/og;
-	$sanitizedUid =~ s/[^$OK_CHARS]//og;
-	$sanitizedPw =~ s/[^$OK_CHARS]//og;
+	my $OK_CHARS='a-zA-Z0-9_.@\$';
+	$sanitizedPw =~ s/\%24/\$/g;
+	$sanitizedUid =~ s/[^$OK_CHARS]//g;
+	$sanitizedPw =~ s/[^$OK_CHARS]//g;
 
 	# connect to DB
 	my $driver = "Pg";
