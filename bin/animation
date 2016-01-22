@@ -1,0 +1,21 @@
+#!/bin/bash
+# file: /bin/animation
+
+anim() {
+	if [ $1 == "on" ]; then
+		while true; do
+			echo "X";
+			sleep 0.5s;
+		done &
+	elif [ $1 == "off" ]; then
+		kill -9 $!;
+	fi
+}
+
+export -f anim
+
+echo "generating Kernel"
+anim on
+sleep 5s; 
+anim off
+echo "done"

@@ -1,0 +1,32 @@
+#!/bin/bash
+# script: /bin/failover, started by cron every minute to check network
+# connectivity
+# crontab -e
+# */1 * * * * /bin/failover
+
+ping -q -c4 192.0.0.2 > /dev/null
+
+# was ping succesful?
+if [ $? -eq 0 ]; then
+	# end gracefully
+	exit 0;
+else
+	# default-gw doesn't answer -> jump in to replace it
+	# set up network
+	# eth1 for NW-1
+	ifconfig eth1 192.0.0.1 netmask 248.0.0.0
+	route add -net 192.0.0.0 netmask 248.0.0.0 gw 128.0.0.2 dev eth1
+	# eth0 for NW-0
+	ifconfig eth0 128.0.0.2 netmask 240.0.0.0
+	route add -net 128.0.0.0 netmask 240.0.0.0 gw 128.0.0.1 dev eth0
+	# activate ipv4-forward
+	echo "1" /proc/sys/net/ipv4/ip_forward
+
+	# start the required services
+	/etc/init.d/named start
+	/etc/init.d/httpd start
+	/etc/init.d/ldap start
+
+	# end gracefully
+	exit 0
+fi

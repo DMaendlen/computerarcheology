@@ -1,4 +1,5 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
+# file: /bin/media
 # usage: media <username>
 
 use strict;

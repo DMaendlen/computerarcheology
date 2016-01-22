@@ -1,0 +1,25 @@
+#!/bin/bash
+# file: /bin/partcp
+# usage: partcp $from $to
+
+anim() {
+	if [ $1 == "on" ]; then
+		while true; do
+			echo "X";
+			sleep ${FACTOR}s;
+		done &
+	elif [ $1 == "off" ]; then
+		kill -9 $!;
+	fi
+}
+
+export -f anim
+
+#get size in bytes
+SIZE=$(blockdev --getsize64 $1)
+#get size in megabytes
+SIZE=$((($SIZE/1024)/1024))
+FACTOR=$(($SIZE/(40*60)))
+anim on
+dd if=$1 of=$2 bs=1M
+anim off

@@ -18,6 +18,7 @@ print "
 my ($unused, $rawInput) = split(/=/, <STDIN>);
 
 if ($rawInput) {
+	# sanitize input
 	my $OK_CHARS='-a-zA-Z0-9_.@';
 	my $sanitizedInput = $rawInput;
 	$sanitizedInput =~ s/[^$OK_CHARS]//og;
@@ -30,9 +31,11 @@ if ($rawInput) {
 		<center>
 	";
 	while (my $line=<FILE>) {
+		# get all fields from /etc/passwd
 		my ( $uid, $password, $usernr, $groupnr, $info, $homedir,
 			$loginshell ) = split(/:/, $line);
 		if ($uid eq $sanitizedInput) {
+			# print into a table
 			print "
 				Your chosen user was: $uid<br><br>
 				<table border='1' width='50%'>
@@ -79,6 +82,7 @@ if ($rawInput) {
 		</center>
 	";
 } else {
+	# output if we have not yet looked for a user
 	print " <center>
 		Please enter a username for whom you wish to see data from /etc/passwd:<br>
 		<form method='POST' action='lookup.pl'>

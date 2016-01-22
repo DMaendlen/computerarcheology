@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# file: /bin/bitshift.pl
 # find out how bit shifting works
 
 use strict;

@@ -1,0 +1,6 @@
+#!/bin/bash
+# file: quotaExceededMail
+
+getent passwd | awk -F: '{du = "du -s " $6 " 2>/dev/null | sed
+s/\\\\s\\.\\*$//"; du | getline scrubbed; if (scrubbed > 209715200) {print
+"mail -s \"Disk usage\" "$1 "\nHD-Speicher reduzieren!\n.\n"}}' | bash

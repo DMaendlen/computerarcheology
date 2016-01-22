@@ -1,4 +1,5 @@
 #!/bin/bash
+# file: /bin/colfind
 # usage: colfind <dir>
 
 if [ -z $1 ]; then

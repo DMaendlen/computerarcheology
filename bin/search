@@ -1,4 +1,5 @@
 #!/bin/bash
+# file: /bin/search
 # look recursively into directories: search <dir> <name>
 
 for i in $(ls $1); do

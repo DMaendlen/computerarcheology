@@ -1,0 +1,17 @@
+#!/bin/sh -e
+# file: /etc/init.d/ramtmp
+
+case "$1" in
+	start)
+		TEMPFILE=$(mktemp /tempfile.XXX)
+		mount -o rw -t tmpfs $TEMPFILE /tmp
+		echo $TEMPFILE > /tmp/tempfile.tmp
+		;;
+	stop)
+		TEMPFILE=$(cat /tmp/tempfile.tmp)
+		umount /tmp
+		rm $TEMPFILE
+		;;
+esac
+
+exit 0

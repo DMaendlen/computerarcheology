@@ -1,4 +1,5 @@
 #!/bin/bash
+# file: /bin/udel
 # delete users using udel <uid>
 
 backup=$HOME/studium/HS_ES/WS15/rb/scripts/home/backup

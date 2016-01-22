@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# file: /bin/passwdToLdif
 
 use strict;
 use warnings;

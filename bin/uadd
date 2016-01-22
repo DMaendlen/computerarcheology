@@ -1,4 +1,5 @@
 #!/bin/bash
+# file: /bin/uadd
 # add a user: uadd <uid> <u-nr> <g-nr>
 
 # declare local variables to ensure we don't accidentally use the system files

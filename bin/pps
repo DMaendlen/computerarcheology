@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# file: /bin/pps
 # usage: pps
 #
 # emulates `ps axl`

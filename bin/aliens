@@ -1,4 +1,5 @@
 #!/bin/bash
+# file: /bin/aliens
 # usage: aliens <user>
 
 if [ -z $1 ]; then
