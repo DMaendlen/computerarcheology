@@ -1,0 +1,16 @@
+; file: /etc/named/zones/db.0.24.172
+$TTL	604800
+@	IN	SOA	damait06.local. admin.damait06.local. (
+				1	; Serial
+			604800		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800 )	; Negative Cache TTL
+;
+
+; name servers
+	IN	NS	ns.damait06.local.
+
+; PTR Records
+81	IN	PTR	ns.damait06.local.	; 172.24.0.81
+82	IN	PTR	host.damait06.local.	; 172.24.0.82

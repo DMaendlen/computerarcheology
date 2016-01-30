@@ -1,0 +1,10 @@
+#!/bin/bash
+# file: /bin/ldapaddwrapper
+# usage: ldapaddwrapper /PATH/TO/LDIFDIR rootpw
+
+LDIFDIR=$1
+ROOTPW=$2
+
+for i in $LDIFDIR/*; do
+	ldapadd -x -D "cn=root,dc=test,dc=de" -w $ROOTPW -f $i;
+done

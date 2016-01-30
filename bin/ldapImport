@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# file: /bin/passwdToLdif
+# file: /bin/ldapImport
 
 use strict;
 use warnings;
@@ -21,12 +21,13 @@ unless ( -d "ldif" ) {
 
 while (my $line = <INFILE>) {
 	chomp($line);
-	my ($uid, $unused) = split(/:/, $line, 2);
+	my ($uid, $passwd, $unused) = split(/:/, $line, 3);
+	$passwd = `slappasswd -s "_${uid}" -c "\$1\$"`;
 	open(OUTFILE, '>', "passwd/passwd.$uid") or do {
 		warn "Couldn't open $filename: $!";
 		return {};
 	};
-	print(OUTFILE $line);
+	print(OUTFILE "$uid:$passwd:$unused");
 	close(OUTFILE);
 }
 close(INFILE);
@@ -37,4 +38,19 @@ while (my $file = readdir PASSWD) {
 	`/usr/share/openldap/migration/migrate_passwd.pl "passwd/$file" "ldif/$uid.ldif"`
 }
 closedir PASSWD;
+open(ROOTNODE, "ldif/rootNode.ldif");
+print $ROOTNODE, << EOF;
+dn: dc=test,dc=de
+dc: test
+objectClass: top
+objectClass: domain
+EOF
+close(ROOTNODE);
 
+open(PEOPLENODE, "ldif/people.ldif");
+print $PEOPLENODE, << EOF;
+dn: ou=People,dc=test,dc=de
+ou: People
+objectClass: top
+objectClass: organizationalUnit
+close(PEOPLENODE);

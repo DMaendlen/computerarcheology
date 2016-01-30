@@ -1,0 +1,50 @@
+#!/bin/bash
+# network configuration
+
+#configure network manually
+# configure loopback interface
+#/sbin/ifconfig lo 127.0.0.1 netmask 255.0.0.0 broadcast 127.255.255.255
+#/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 dev lo
+#
+## configure eth0 to 172.16.0.52/27
+#/sbin/ifconfig eth0 172.16.0.52 netmask 255.255.255.224
+#/sbin/route add -net 172.16.0.32 netmask 255.255.255.224 gw 172.16.0.33 dev eth0
+
+# configure network automatically
+echo >/etc/sysconfig/network-scripts/ifcfg-eth0 << EOF
+# Marvell Technology Group Ltd. 88E8056 PCI-E Gigabit Ethernet Controller
+DEVICE=eth0
+ONBOOT=yes
+BOOTPROTO=none
+IPADDR=172.16.0.52
+NETMASK=255.255.255.224
+GATEWAY=172.16.0.33
+NETWORK=172.16.0.32
+HWADDR=00:24:8c:02:c3:b4
+EOF
+
+echo > /etc/sysconfig/network-scripts/ifcfg-eth1 << EOF
+# Marvell Technology Group Ltd. 88E8056 PCI-E Gigabit Ethernet Controller
+DEVICE=eth1
+ONBOOT=yes
+IPADDR=172.24.0.81
+NETMASK=255.255.255.240
+GATEWAY=172.16.0.33
+EOF
+
+# initiate ipv4 forwarding
+echo "1" > /proc/sys/net/ipv4/ip_forward
+sed -i 's/ip_forward=0/ip_forward=1/' /etc/init.d/network
+
+# make sure eth{0,1} is a valid alias
+echo "alias eth0 sky2" >> /etc/modprobe.conf
+echo "alias eth1 sky2" >> /etc/modprobe.conf
+
+# activate dns resolve
+echo 'nameserver 172.16.0.33' >> /etc/resolv.conf
+
+# start network automatically
+ln -s /etc/init.d/network /etc/rc3.d/S10network
+
+# restart configured network
+/etc/init.d/network restart

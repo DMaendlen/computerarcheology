@@ -1,0 +1,4 @@
+dn: ou=People,dc=test,dc=de
+ou: People
+objectClass: top
+objectClass: organizationalUnit

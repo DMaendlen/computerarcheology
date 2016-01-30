@@ -1,0 +1,10 @@
+# file: /etc/named/named.conf.local
+zone "damait06.local" {
+	type master;
+	file "/etc/named/zones/db.damait06.local";
+};
+
+zone "0.24.172.in-addr.arpa" {
+	type master;
+	file "/etc/named/zones/db.0.24.172";
+};

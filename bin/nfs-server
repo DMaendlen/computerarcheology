@@ -1,0 +1,11 @@
+#!/bin/bash
+# nfs-server
+
+# activate exports
+echo "/home 172.24.0.82(rw,sync,root_squash)" >> /etc/exports
+
+# automatically start nfs daemon, if this doesn't make sure rpcbind is running
+ln -s /etc/init.d/nfs /etc/rc3.d/S14nfs
+
+# synchronize exports
+exportfs -avr

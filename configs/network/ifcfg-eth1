@@ -1,0 +1,7 @@
+# file: /etc/sysconfig/network-scripts/ifcfg-eth1
+# Marvell Technology Group Ltd. 88E8056 PCI-E Gigabit Ethernet Controller
+DEVICE=eth1
+ONBOOT=yes
+IPADDR=172.24.0.81
+NETMASK=255.255.255.240
+GATEWAY=172.16.0.33

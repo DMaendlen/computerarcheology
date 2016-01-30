@@ -1,0 +1,8 @@
+#!/bin/bash
+# file: /bin/ldapsearchwrapper
+# usage: ldapsearchwrapper username
+# output: ldif-file containing userinfo called username.ldif
+
+UID=$1
+
+ldapsearch -x -D "cn=root,ou=People,dc=test,dc=de" -w geheim -LLL "uid=$UID" > $UID.ldif

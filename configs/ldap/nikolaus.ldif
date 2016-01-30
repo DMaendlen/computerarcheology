@@ -1,0 +1,13 @@
+dn: uid=nikolaus,ou=People,dc=test,dc=de
+uid: nikolaus
+cn: Niko Laus
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+userPassword: {CRYPT}$1$$bAruZf3Z.3KDnDfezJ5j81
+loginShell: /bin/bas
+uidNumber: 16203
+gidNumber: 24120
+homeDirectory: /home/nikolaus
+gecos: Niko Laus
+

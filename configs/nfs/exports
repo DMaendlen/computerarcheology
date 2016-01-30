@@ -1,0 +1,2 @@
+# file: /etc/exports
+/home 172.24.0.82(rw,sync,root_squash)

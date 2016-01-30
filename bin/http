@@ -1,0 +1,28 @@
+#!/bin/bash
+# http
+
+# /etc/httpd/conf/httpd.conf
+# set ServerName
+sed -i 's/^ServerName/#ServerName/' /etc/httpd/conf/httpd.conf
+sed -i '/ServerName/a ServerName ns.damait06.local:80' /etc/httpd/conf/httpd.conf
+
+# set DocumentRoot
+sed -i 's/DocumentRoot "/var/www/html"/DocumentRoot "/home/apache/html"' /etc/httpd/conf/httpd.conf
+
+# set Directory
+sed -i 's/<Directory "/var/www/html">/<Directory "/home/apache/html">' /etc/httpd/conf/httpd.conf
+
+# set icons Alias
+sed -i 's/Alias \/icons\/ "\/var\/www\/icons\/"/Alias \/icons\/ "/home\/apache\/icons\/"' /etc/httpd/conf/httpd.conf
+
+# set icons Directory
+sed -i 's/<Directory "\/var\/www\/icons">/<Directory "\/home\/apache\/icons">' /etc/httpd/conf/httpd.conf
+
+# set cgi-bin Alias
+sed -i 's/Alias \/cgi-bin\/ "\/var\/www\/cgi-bin\/"/Alias \/cgi-bin\/ "/home\/apache\/cgi-bin\/"' /etc/httpd/conf/httpd.conf
+
+# set cgi-bin Directory
+sed -i 's/<Directory "\/var\/www\/cgi-bin">/<Directory "\/home\/apache\/cgi-bin">' /etc/httpd/conf/httpd.conf
+
+# start apache automatically
+ln -s /etc/init.d/httpd /etc/rc3.d/S99httpd

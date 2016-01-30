@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# mount newly created root partition
+mount /dev/sdb2 /mnt
+
+# copy relevant data
+# tar -cf: create tar-file, pipe it to
+# tar xvpf -: extract data from tar-file, preserving permissions
+cd /
+tar -cf - bin boot dev etc lib lib64 opt root sbin usr var | (cd /mnt; tar xvpf -);
+
+# create temporary folder to edit ramdisk
+mkdir /mnt/ramdisk
+mv /mnt/boot/initrd-2.6.23.1-42.fc8.img /mnt/ramdisk/initrd.gz
+cd /mnt/ramdisk
+gunzip initrd.gz
+cpio -i < initrd
+
+# edit init if necessary, for example remove all lines containing 'penis'
+sed -i '/penis/d' # can be done by hand using vim, too
+# activate usb if necessary
+echo "mount -t usbfs /proc/bus/usb /proc/bus/usb" >> init
+# activate restoration from swap if necessary
+echo "resume LABEL=mySwap" >> init
+
+# edit grub to boot from correct drive
+sed -i 's/LABEL=*$/LABEL=myLinux' /mnt/boot/grub/grub.conf
+
+#edit fstab to use correct drives
+sed -i '/\s+\\\s+/d'
+echo "LABEL=myLinux\t\t/\t\text3\tdefaults\t1\t1" >> /mnt/etc/fstab
+
+# copy usb_storage module to make sure we can boot from external drive
+cp /mnt/lib/modules/2.6.23.1-42.fc8/kernel/drivers/usb/storage/usb_storage.ko \
+	/mnt/ramdisk/lib/usb_storage.ko
+
+# create new ramdisk from edited content
+find /mnt/ramdisk/. -print | cpio -H newc -o > /mnt/boot/initrd.img
+
+# cleanup
+rm -r /mnt/ramdisk
+
+# edit grub.conf again to use new ramdisk
+sed -i '/initrd/d' /mnt/boot/grub/grub.conf
+echo "\tinitrd /boot/initrd.img" >> /mnt/boot/grub/grub.conf
+
+# install grub into master boot record (mbr)
+grub-install --root-directory=/dev/sdb

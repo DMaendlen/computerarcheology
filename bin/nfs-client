@@ -1,0 +1,8 @@
+#!/bin/bash
+# nfs-client
+
+# make sure, fstab knows where to find /home on the network
+echo '172.24.0.82:/home\t\t/remote\t\tnfs\tdefaults\t0\t0' >> /etc/fstab
+
+# activate automounting /home
+ln -s /etc/init.d/netfs /etc/rc3.d/S15netfs

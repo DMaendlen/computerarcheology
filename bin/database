@@ -1,0 +1,19 @@
+#!/bin/bash
+# database (postgresql)
+
+# run postgresql in the background.
+# to daemonize use /etc/init.d/postgres start
+# be careful: this does not necessarily run postgres as the correct user/with
+# the correct homedir
+postmaster -d 3 -D /var/lib/pgsql &
+
+# as user postgres (db admin) create db user apache
+(su postgres; createuser apache)
+
+# as user apache (new db user) create database
+(su apache; create mydb;)
+
+# from here on you can use e. g. /home/apache/cgi-bin/dbimport.pl to import
+# data
+# if you want to do things manually use the following line (interactive):
+# (su apache; psql mydb)

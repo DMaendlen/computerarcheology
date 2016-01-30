@@ -1,0 +1,17 @@
+#!/bin/bash
+# file: /bin/ldapmodifywrapper
+# usage: ldapmodifywrapper username userpassword rootpw
+
+UID=$1
+CLEARPW=$2
+ROOTPW=$3
+
+# create salted and hashed pw from clearpw, base64 encoded
+PW=$(slappasswd -s "$CLEARPW" -c '$1$')
+
+# change password in ldif file
+sed -i '/userPassword:*/d' $UID.ldif
+echo "userPassword: {crypt}$PW" >> $UID.ldif
+
+# modify ldap user
+ldapmodify -x -D "cn=root,dc=test,dc=de" -w $ROOTPW -f $UID.ldif

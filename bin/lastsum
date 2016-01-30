@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my $lastOutput = qx(last);
+
+my %result;
+
+foreach my $line (split(/[\r\n]/, $lastOutput)) {
+	my @lineBasedOutput = split(/\s+/, $line, 11);
+	next if ($#lineBasedOutput <= 8);
+	next unless ($lineBasedOutput[1] =~ m/[tty|pts].*/);
+	if($lineBasedOutput[9] =~ /\((\d*)\+*(\d{2}):(\d{2})\)/) {
+		my $user = $lineBasedOutput[0];
+		my ($loginDays, $loginHours, $loginMinutes) = ($1, $2, $3);
+		if ($loginDays) {
+			$loginHours += ($loginDays * 24);
+		}
+		$loginMinutes += ($loginHours * 60);
+		if ($result{$user}){
+			$result{$user} += $loginMinutes;
+		} else {
+			$result{$user} = $loginMinutes;
+		}
+	}
+}
+
+while (my ($key, $value) = each %result) {
+	print("$key: $value\n");
+}

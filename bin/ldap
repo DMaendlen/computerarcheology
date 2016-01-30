@@ -1,0 +1,43 @@
+#!/bin/bash
+# file: /bin/ldap
+
+# create hashed and salted password
+LDAPPASSWD=$(slappasswd –s 'geheim' -c'$1$')
+
+# edit /etc/openldap/slapd.conf
+sed -i 's/database\s+*$/database	bdb' /etc/openldap/slapd.conf
+sed -i 's/suffix\s+*$/suffix· ·       "dc=test,dc=de"' /etc/openldap/slapd.conf
+sed -i 's/rootdn\s+*$/rootdn· ·       "cn=root,dc=test,dc=de"'\
+	/etc/openldap/slapd.conf
+
+sed -i '/rootpw/d' /etc/openldap/slapd.conf
+echo "rootpw\t\t${LDAPPASSWD}" >> /etc/openldap/slapd.conf
+
+# edit /etc/ldap.conf
+sed -i 's/base\s+*$/base	dc=test,dc=de' /etc/ldap.conf
+sed -i 's/uri\s+*$/uri ldap://ns.damait06.local' /etc/ldap.conf
+
+# edit /etc/openldap/ldap.conf
+sed -i 's/BASE\s+*$/BASE	dc=test,dc=de' /etc/ldap.conf
+sed -i 's/URI\s+*$/URI ldap://ns.damait06.local' /etc/ldap.conf
+
+# change default base in migration.ph
+sed -i 's/DEFAULT_BASE*$/DEFAULT_BASE = "dc=test,dc=de"/' \
+	/usr/share/openldap/migration/migrate_common.ph
+
+# import passwd.bsp into ldap. ATTENTION: PASSWORDS HAVE TO BE CREATED FIRST!
+# example: user:user_ is to be the clear-text user/password combination
+# ldapImport is a script in /bin/ I wrote
+mkdir /tmp/ldapimport && cd /tmp/ldapimport
+mv /root/passwd.bsp /tmp/ldapimport
+/bin/ldapImport passwd.bsp
+for i in ldif/*; do
+	ldapadd -x -D "cn=root,dc=test,dc=de" -w geheim -f $i;
+done
+cd /root/
+rm -r /tmp/ldapimport
+
+# make sure our server uses ldap for user logins (has to be activated on client too)
+sed -i 's/passwd:*/passwd: files ldap' /etc/nsswitch.conf
+sed -i 's/group:*/group: files ldap' /etc/nsswitch.conf
+sed -i 's/shadow:*/shadow: files ldap' /etc/nsswitch.conf

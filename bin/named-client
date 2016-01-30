@@ -1,0 +1,9 @@
+#!/bin/bash
+# file: /bin/named-client
+
+# use bind as resolver
+echo "search damait06.local\nnameserver 172.24.0.81" > /etc/resolv.conf
+
+# activate nsswitch
+sed -i '/^hosts:/d' /etc/nsswitch.conf
+echo "hosts:\tdns files" >> /etc/nsswitch.conf

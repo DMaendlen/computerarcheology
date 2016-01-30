@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# create partition
+# o: create new MSDOS-partition table
+# n: new partition
+# p: primary
+# 1/2: partition number
+# two newlines: consent to proposed values
+# +nG: size
+# w: write & quit
+fdisk /dev/sdb << EOF
+o
+n
+p
+1
+
+
++8G
+n
+p
+2
+
+
++40G
+w
+EOF
+
+# create and activate swap
+mkswap /dev/sdb1 -L mySwap
+swapon /dev/sdb1
+
+# create file system
+mkfs.ext3 /dev/sdb2 -L myLinux

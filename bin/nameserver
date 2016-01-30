@@ -1,0 +1,131 @@
+#!/bin/bash
+# nameserver configuration
+
+# /var/named/chroot/etc/named.conf
+echo > /var/named/chroot/etc/named.conf << EOF
+acl "trusted" {
+	172.24.0.81;
+	172.24.0.82;
+};
+
+options {
+        listen-on port 53 {
+		172.24.0.81;
+	};
+
+	allow-query {
+		trusted;
+	};
+
+	directory "/var/named";
+	dump-file "/var/named/data/cache_dump.db";
+	statistics-file "/var/named/data/named_stats.txt";
+	recursion yes;
+
+	forwarders {
+		172.16.0.33;
+	};
+
+	query-source address * port 53;
+};
+
+zone "localdomain." IN {
+        type master;
+	file "localdomain.zone";
+	allow-update { none;  };
+
+};
+zone "localhost." IN {
+        type master;
+	file "localhost.zone";
+	allow-update { none;  };
+
+};
+
+zone "localdomain6." IN {
+        type master;
+	file "localdomain6.db";
+
+};
+
+zone "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa."
+IN {
+        type master;
+	file "named.ip6.local";
+	allow-update { none;  };
+
+};
+;# comment the following line to use named only as a caching nameserver
+include "/etc/named/named.conf.local";
+EOF
+
+# /var/named/chroot/etc/named/named.conf.local
+echo > /var/named/chroot/etc/named/named.conf.local << EOF
+zone "damait06.local" {
+	type master;
+	file "/etc/named/zones/db.damait06.local";
+
+};
+
+zone "0.24.172.in-addr.arpa" {
+	type master;
+	file "/etc/named/zones/db.0.24.172";
+
+};
+EOF
+
+# create zone directory
+mkdir /var/named/chroot/etc/named/zones
+
+# create zone files (1 a record, one reversepointer)
+# reverse pointer
+echo > /var/named/chroot/etc/named/zones/db.0.24.172 << EOF
+$TTL    604800
+@       IN      SOA     damait06.local. admin.damait06.local. (
+			1		; Serial
+			604800 		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800 )        ; Negative Cache TTL
+;
+
+; name servers
+IN      NS      ns.damait06.local.
+
+; PTR Records
+81      IN      PTR     ns.damait06.local.      ; 172.24.0.81
+82      IN      PTR     host2.damait06.local.   ; 172.24.0.82
+EOF
+
+# a record
+echo > /var/named/chroot/etc/named/zones/db.0.24.172 << EOF
+$TTL    604800
+@       IN      SOA     ns.damait06.local. admin.damait06.local. (
+			1		; Serial
+			604800		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800 )	; Negative Cache TTL
+;
+; name servers - NS records
+	IN      NS      ns.damait06.local.
+
+; name servers - A records
+ns.damait06.local.      IN      A       172.24.0.81
+
+; 172.24.0.80/28
+host2.damait06.local.   IN      A       172.24.0.82
+EOF
+
+# use bind service
+echo "order hosts, bind" > /etc/hosts.conf
+
+# use bind as resolver
+echo "search damait06.local\nnameserver 172.24.0.81" > /etc/resolv.conf
+
+# activate nsswitch
+sed -i '/^hosts:/d' /etc/nsswitch.conf
+echo "hosts:\tdns files" >> /etc/nsswitch.conf
+
+# start automatically
+ln -s /etc/init.d/named /etc/rc3.d/S11named
