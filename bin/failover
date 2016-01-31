@@ -23,8 +23,6 @@ else
 	# set up network
 	# eth1 for NW-1
 	ifconfig eth1 192.0.0.1 netmask 248.0.0.0
-	# necessary ?
-	route add -net 192.0.0.0 netmask 248.0.0.0 gw 128.0.0.2 dev eth1
 	# eth0 for NW-0
 	ifconfig eth0 128.0.0.2 netmask 240.0.0.0
 	route add -net 128.0.0.0 netmask 240.0.0.0 gw 128.0.0.1 dev eth0
