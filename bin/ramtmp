@@ -1,0 +1,17 @@
+#!/bin/bash
+# file: /etc/init.d/ramptmp
+
+case $1 in
+	start)
+		TEMPDIR=$(mktemp -d /temporary.XXX);
+		mount -o rw -t tmpfs $TEMPDIR /tmp
+		echo $TEMPDIR > /var/run/current_tempdir
+		;;
+	stop)
+		umount /tmp
+		TEMPDIR=$(cat /var/run/current_tempdir)
+		if [ -n $TEMPDIR ]; then
+			rm -r $TEMPDIR
+		fi
+		;;
+esac
