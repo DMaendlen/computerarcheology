@@ -1,0 +1,13 @@
+#!/bin/bash
+# file: /bin/usermove
+# move users' homedirs from /user1 /user2 and /user3 to /home
+
+for i in {/user1, /user2, /user3}; do
+	for j in $i/*; do
+		mv $j /home/;
+		ldapsearch -x -D "uid=master,ou=People,dc=Huber-GmbH,dc=de" -w 'secret' -LLL "uid=$j" > $j.ldif;
+		sed -i 's/homeDirectory:*/homeDirectory: '"/home$j"'/' $j.ldif
+		ldapmodify -x -D "uid=master,ou=People,dc=Huber-GmbH,dc=de" -w 'secret' -f $j.ldif
+		rm $j.ldif
+	done
+done

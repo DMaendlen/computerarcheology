@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+
+package U;
+sub new {bless {}};
+sub n {
+	return {v=>$_[1], n=>nil};
+};
+
+package V;
+@ISA=U;
+sub new {bless{}};
+sub a {
+	if ($_[1] == nil) {
+		return n $_[2];
+	} else {
+		return {v=>$_[2], n=>$_[1]};
+	}
+}
+
+package main;
+$x=V->new;
+$p=$x->n('hokus');
+$p=$x->a($p, 'pokus');
+$q=$p;
+print $p->{n}->{v}."\n";
+print $p->{v},"\n";
+$p=$x->a($q,'fidipus');
+print $p->{n}->{v}."\n";
+print $p->{v},"\n";
+print $p->{n}->{n}->{v},"\n";

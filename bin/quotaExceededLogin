@@ -1,0 +1,14 @@
+#!/bin/bash
+
+COUNTER=$((1024*1024*50))
+
+SIZE=$(
+	ls -laR ~ | grep '\(jpg\|gif\)' | awk '{sum += $5; print sum}' | tail -n1;
+)
+
+if [ $SIZE -gt $COUNTER ]; then
+	cat ~/mail.txt;
+	sleep 20s
+	clear;
+	exit 0;
+fi

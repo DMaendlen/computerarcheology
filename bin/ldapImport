@@ -39,7 +39,7 @@ while (my $file = readdir PASSWD) {
 }
 closedir PASSWD;
 open(ROOTNODE, "ldif/rootNode.ldif");
-print $ROOTNODE, << EOF;
+print $ROOTNODE, <<EOF;
 dn: dc=test,dc=de
 dc: test
 objectClass: top
@@ -48,7 +48,7 @@ EOF
 close(ROOTNODE);
 
 open(PEOPLENODE, "ldif/people.ldif");
-print $PEOPLENODE, << EOF;
+print $PEOPLENODE, <<EOF;
 dn: ou=People,dc=test,dc=de
 ou: People
 objectClass: top

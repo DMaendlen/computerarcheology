@@ -1,6 +1,0 @@
-#!/bin/bash
-cat << $0
-echo 'Hallo Welt'
-cat $0
-$0
-cat $0

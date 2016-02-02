@@ -2,7 +2,7 @@
 # nameserver configuration
 
 # /var/named/chroot/etc/named.conf
-echo > /var/named/chroot/etc/named.conf << EOF
+echo > /var/named/chroot/etc/named.conf <<EOF
 acl "trusted" {
 	172.24.0.81;
 	172.24.0.82;
@@ -60,7 +60,7 @@ include "/etc/named/named.conf.local";
 EOF
 
 # /var/named/chroot/etc/named/named.conf.local
-echo > /var/named/chroot/etc/named/named.conf.local << EOF
+echo > /var/named/chroot/etc/named/named.conf.local <<EOF
 zone "damait06.local" {
 	type master;
 	file "/etc/named/zones/db.damait06.local";
@@ -79,7 +79,7 @@ mkdir /var/named/chroot/etc/named/zones
 
 # create zone files (1 a record, one reversepointer)
 # reverse pointer
-echo > /var/named/chroot/etc/named/zones/db.0.24.172 << EOF
+echo > /var/named/chroot/etc/named/zones/db.0.24.172 <<EOF
 $TTL    604800
 @       IN      SOA     damait06.local. admin.damait06.local. (
 			1		; Serial
@@ -98,7 +98,7 @@ IN      NS      ns.damait06.local.
 EOF
 
 # a record
-echo > /var/named/chroot/etc/named/zones/db.0.24.172 << EOF
+echo > /var/named/chroot/etc/named/zones/db.0.24.172 <<EOF
 $TTL    604800
 @       IN      SOA     ns.damait06.local. admin.damait06.local. (
 			1		; Serial

@@ -8,7 +8,7 @@
 # two newlines: consent to proposed values
 # +nG: size
 # w: write & quit
-fdisk /dev/sdb << EOF
+fdisk /dev/sdb <<EOF
 o
 n
 p
